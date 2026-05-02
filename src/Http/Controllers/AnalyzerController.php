@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Http\Controllers;
+namespace Ahmedhsieb\Analyzer\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use LaraMint\Analyzer\Analysis\ProjectAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\ProjectAnalyzer;
 
 class AnalyzerController extends Controller
 {
@@ -122,6 +122,8 @@ class AnalyzerController extends Controller
         return '';
     }
 }
+
+
 
 
 

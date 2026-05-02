@@ -6,3 +6,5 @@ use Shared\Controllers\SharedRouteController;
 Route::get('/shared/ping', [SharedRouteController::class, 'index']);
 
 
+
+

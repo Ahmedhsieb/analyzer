@@ -1,6 +1,6 @@
 <?php
 
-use LaraMint\Analyzer\Analysis\ModelAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\ModelAnalyzer;
 
 $fixtureProject = __DIR__.'/../fixtures/laravel-project';
 $monorepoFixture = __DIR__.'/../fixtures/monorepo';
@@ -42,5 +42,7 @@ it('resolves models from nested module composer roots', function () use ($monore
     expect($models)->toHaveKey('Modules\\Billing\\Models\\Invoice');
     expect($models['Modules\\Billing\\Models\\Invoice']->file)->toContain('/modules/Billing/app/Models/Invoice.php');
 });
+
+
 
 

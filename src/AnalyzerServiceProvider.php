@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer;
+namespace Ahmedhsieb\Analyzer;
 
 use Illuminate\Support\ServiceProvider;
-use LaraMint\Analyzer\Commands\ScanCommand;
+use Ahmedhsieb\Analyzer\Commands\ScanCommand;
 
 class AnalyzerServiceProvider extends ServiceProvider
 {
@@ -21,6 +21,8 @@ class AnalyzerServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/analyzer.php');
     }
 }
+
+
 
 
 

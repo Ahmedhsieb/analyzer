@@ -1,5 +1,5 @@
 {
-    "name": "laramint/analyzer",
+    "name": "ahmedhsieb/analyzer",
     "description": "Visualize your Laravel request lifecycle as an interactive graph",
     "type": "library",
     "license": "MIT",
@@ -17,18 +17,18 @@
     },
     "autoload": {
         "psr-4": {
-            "LaraMint\\Analyzer\\": "src/"
+            "Ahmedhsieb\\Analyzer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaraMint\\Analyzer\\Tests\\": "tests/"
+            "Ahmedhsieb\\Analyzer\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaraMint\\Analyzer\\AnalyzerServiceProvider"
+                "Ahmedhsieb\\Analyzer\\AnalyzerServiceProvider"
             ]
         }
     },

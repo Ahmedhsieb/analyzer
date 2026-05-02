@@ -1,8 +1,16 @@
 # Analyzer
 
+This is a Laravel dev tool package that analyzes your app and builds a graph of routes, controllers, services, and more.
 Analyzer is a Laravel developer tool that scans your architecture and visualizes route-to-code flow as an interactive graph.
 
 It is designed for monorepos and modular codebases where routes may live in `packages`, `modules`, `extensions`, microservices, or any custom folder naming convention.
+
+## Attribution
+
+This project is based on and references the original Laravel Brain project:
+`https://github.com/laramint/laravel-brain`
+
+Analyzer includes my own updates and additional features on top of that foundation.
 
 ## Highlights
 
@@ -19,7 +27,7 @@ It is designed for monorepos and modular codebases where routes may live in `pac
 ## Installation
 
 ```bash
-composer require --dev laramint/analyzer
+composer require --dev ahmedhsieb/analyzer
 ```
 
 ## Commands

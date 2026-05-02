@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Analysis;
+namespace Ahmedhsieb\Analyzer\Analysis;
 
 class MiddlewareRegistry
 {
@@ -22,5 +22,7 @@ class MiddlewareRegistry
         return $this->groups[$group] ?? [];
     }
 }
+
+
 
 

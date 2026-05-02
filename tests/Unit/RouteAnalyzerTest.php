@@ -1,6 +1,6 @@
 <?php
 
-use LaraMint\Analyzer\Analysis\RouteAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\RouteAnalyzer;
 
 $fixtureProject = __DIR__.'/../fixtures/laravel-project';
 $monorepoFixture = __DIR__.'/../fixtures/monorepo';
@@ -67,5 +67,7 @@ it('scans nested routes inside monorepo layouts regardless of container folder n
     expect($extension)->not->toBeNull();
     expect($extension->controller)->toBe('Extensions\\PayrollHub\\Http\\Controllers\\EmployeeController');
 });
+
+
 
 

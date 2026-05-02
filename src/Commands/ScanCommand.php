@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Commands;
+namespace Ahmedhsieb\Analyzer\Commands;
 
 use Illuminate\Console\Command;
-use LaraMint\Analyzer\Analysis\ProjectAnalyzer;
-use LaraMint\Analyzer\Analysis\ProjectStructure;
+use Ahmedhsieb\Analyzer\Analysis\ProjectAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\ProjectStructure;
 
 class ScanCommand extends Command
 {
@@ -369,5 +369,7 @@ class ScanCommand extends Command
         }
     }
 }
+
+
 
 

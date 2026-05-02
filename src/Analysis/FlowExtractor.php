@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Analysis;
+namespace Ahmedhsieb\Analyzer\Analysis;
 
 use PhpParser\Node;
 use PhpParser\PrettyPrinter\Standard as PrettyPrinter;
@@ -558,5 +558,7 @@ class FlowExtractor
         return end($parts);
     }
 }
+
+
 
 

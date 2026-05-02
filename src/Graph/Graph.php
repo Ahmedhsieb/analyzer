@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Graph;
+namespace Ahmedhsieb\Analyzer\Graph;
 
 class Graph
 {
@@ -98,5 +98,7 @@ class Graph
         return $json;
     }
 }
+
+
 
 

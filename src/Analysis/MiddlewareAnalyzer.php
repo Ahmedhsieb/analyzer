@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Analysis;
+namespace Ahmedhsieb\Analyzer\Analysis;
 
-use LaraMint\Analyzer\Parser\PhpFileParser;
+use Ahmedhsieb\Analyzer\Parser\PhpFileParser;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
@@ -251,5 +251,7 @@ class MiddlewareAnalyzer
         return new MiddlewareRegistry([], $visitor->groups, $visitor->aliases);
     }
 }
+
+
 
 

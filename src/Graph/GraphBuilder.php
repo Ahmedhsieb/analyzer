@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\Analyzer\Graph;
+namespace Ahmedhsieb\Analyzer\Graph;
 
-use LaraMint\Analyzer\Analysis\CallChainEdge;
-use LaraMint\Analyzer\Analysis\ChannelDefinition;
-use LaraMint\Analyzer\Analysis\ConsoleCommandDefinition;
-use LaraMint\Analyzer\Analysis\ControllerDefinition;
-use LaraMint\Analyzer\Analysis\DbQuery;
-use LaraMint\Analyzer\Analysis\FlowExtractor;
-use LaraMint\Analyzer\Analysis\MiddlewareRegistry;
-use LaraMint\Analyzer\Analysis\ModelDefinition;
-use LaraMint\Analyzer\Analysis\ProjectStructure;
-use LaraMint\Analyzer\Analysis\RouteDefinition;
-use LaraMint\Analyzer\Analysis\ScheduleEntry;
-use LaraMint\Analyzer\Parser\PhpFileParser;
+use Ahmedhsieb\Analyzer\Analysis\CallChainEdge;
+use Ahmedhsieb\Analyzer\Analysis\ChannelDefinition;
+use Ahmedhsieb\Analyzer\Analysis\ConsoleCommandDefinition;
+use Ahmedhsieb\Analyzer\Analysis\ControllerDefinition;
+use Ahmedhsieb\Analyzer\Analysis\DbQuery;
+use Ahmedhsieb\Analyzer\Analysis\FlowExtractor;
+use Ahmedhsieb\Analyzer\Analysis\MiddlewareRegistry;
+use Ahmedhsieb\Analyzer\Analysis\ModelDefinition;
+use Ahmedhsieb\Analyzer\Analysis\ProjectStructure;
+use Ahmedhsieb\Analyzer\Analysis\RouteDefinition;
+use Ahmedhsieb\Analyzer\Analysis\ScheduleEntry;
+use Ahmedhsieb\Analyzer\Parser\PhpFileParser;
 use PhpParser\Node as PhpNode;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
@@ -970,5 +970,7 @@ function class_basename(string $fqcn): string
 
     return end($parts);
 }
+
+
 
 

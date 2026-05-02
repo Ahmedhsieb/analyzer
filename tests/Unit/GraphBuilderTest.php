@@ -1,11 +1,11 @@
 <?php
 
-use LaraMint\Analyzer\Analysis\ControllerAnalyzer;
-use LaraMint\Analyzer\Analysis\MethodTracer;
-use LaraMint\Analyzer\Analysis\MiddlewareRegistry;
-use LaraMint\Analyzer\Analysis\ModelAnalyzer;
-use LaraMint\Analyzer\Analysis\RouteAnalyzer;
-use LaraMint\Analyzer\Graph\GraphBuilder;
+use Ahmedhsieb\Analyzer\Analysis\ControllerAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\MethodTracer;
+use Ahmedhsieb\Analyzer\Analysis\MiddlewareRegistry;
+use Ahmedhsieb\Analyzer\Analysis\ModelAnalyzer;
+use Ahmedhsieb\Analyzer\Analysis\RouteAnalyzer;
+use Ahmedhsieb\Analyzer\Graph\GraphBuilder;
 
 $fixtureProject = __DIR__.'/../fixtures/laravel-project';
 
@@ -56,5 +56,7 @@ it('creates route nodes for each route', function () use ($fixtureProject) {
     $routeNodes = array_filter($graph->nodes(), fn ($n) => $n->type === 'route');
     expect(count($routeNodes))->toBe(count($routes));
 });
+
+
 
 
