@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Graph;
+namespace LaraMint\Analyzer\Graph;
 
-use LaraMint\LaravelBrain\Analysis\CallChainEdge;
-use LaraMint\LaravelBrain\Analysis\ChannelDefinition;
-use LaraMint\LaravelBrain\Analysis\ConsoleCommandDefinition;
-use LaraMint\LaravelBrain\Analysis\ControllerDefinition;
-use LaraMint\LaravelBrain\Analysis\DbQuery;
-use LaraMint\LaravelBrain\Analysis\FlowExtractor;
-use LaraMint\LaravelBrain\Analysis\MiddlewareRegistry;
-use LaraMint\LaravelBrain\Analysis\ModelDefinition;
-use LaraMint\LaravelBrain\Analysis\ProjectStructure;
-use LaraMint\LaravelBrain\Analysis\RouteDefinition;
-use LaraMint\LaravelBrain\Analysis\ScheduleEntry;
-use LaraMint\LaravelBrain\Parser\PhpFileParser;
+use LaraMint\Analyzer\Analysis\CallChainEdge;
+use LaraMint\Analyzer\Analysis\ChannelDefinition;
+use LaraMint\Analyzer\Analysis\ConsoleCommandDefinition;
+use LaraMint\Analyzer\Analysis\ControllerDefinition;
+use LaraMint\Analyzer\Analysis\DbQuery;
+use LaraMint\Analyzer\Analysis\FlowExtractor;
+use LaraMint\Analyzer\Analysis\MiddlewareRegistry;
+use LaraMint\Analyzer\Analysis\ModelDefinition;
+use LaraMint\Analyzer\Analysis\ProjectStructure;
+use LaraMint\Analyzer\Analysis\RouteDefinition;
+use LaraMint\Analyzer\Analysis\ScheduleEntry;
+use LaraMint\Analyzer\Parser\PhpFileParser;
 use PhpParser\Node as PhpNode;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
@@ -970,3 +970,5 @@ function class_basename(string $fqcn): string
 
     return end($parts);
 }
+
+

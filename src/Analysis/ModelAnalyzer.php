@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Analysis;
+namespace LaraMint\Analyzer\Analysis;
 
-use LaraMint\LaravelBrain\Parser\PhpFileParser;
+use LaraMint\Analyzer\Parser\PhpFileParser;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
@@ -207,3 +207,5 @@ class ModelAnalyzer
         return null;
     }
 }
+
+

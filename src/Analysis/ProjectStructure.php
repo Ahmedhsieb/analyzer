@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Analysis;
+namespace LaraMint\Analyzer\Analysis;
 
 class ProjectStructure
 {
@@ -228,3 +228,5 @@ class ProjectStructure
         return false;
     }
 }
+
+

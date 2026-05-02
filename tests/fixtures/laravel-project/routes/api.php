@@ -15,3 +15,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('/orders/{id}', [OrderController::class, 'destroy']);
 });
+
+

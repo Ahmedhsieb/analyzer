@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain;
+namespace LaraMint\Analyzer;
 
 use Illuminate\Support\ServiceProvider;
-use LaraMint\LaravelBrain\Commands\ScanCommand;
+use LaraMint\Analyzer\Commands\ScanCommand;
 
-class LaravelBrainServiceProvider extends ServiceProvider
+class AnalyzerServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
@@ -18,7 +18,9 @@ class LaravelBrainServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'analyzer');
         $this->commands([ScanCommand::class]);
-        $this->loadRoutesFrom(__DIR__.'/../routes/brain.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/analyzer.php');
     }
 }
+
+
 

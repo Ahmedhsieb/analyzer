@@ -21,3 +21,5 @@ class AuthController
         return response()->json(['token' => $token]);
     }
 }
+
+

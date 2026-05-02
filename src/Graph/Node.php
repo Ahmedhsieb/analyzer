@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Graph;
+namespace LaraMint\Analyzer\Graph;
 
 class Node implements \JsonSerializable
 {
@@ -23,3 +23,5 @@ class Node implements \JsonSerializable
         ];
     }
 }
+
+

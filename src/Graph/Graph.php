@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Graph;
+namespace LaraMint\Analyzer\Graph;
 
 class Graph
 {
@@ -98,3 +98,5 @@ class Graph
         return $json;
     }
 }
+
+

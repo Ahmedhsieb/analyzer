@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Analysis;
+namespace LaraMint\Analyzer\Analysis;
 
-use LaraMint\LaravelBrain\Graph\Graph;
-use LaraMint\LaravelBrain\Graph\GraphBuilder;
-use LaraMint\LaravelBrain\Graph\GraphSplitter;
-use LaraMint\LaravelBrain\Graph\TabManifestEntry;
+use LaraMint\Analyzer\Graph\Graph;
+use LaraMint\Analyzer\Graph\GraphBuilder;
+use LaraMint\Analyzer\Graph\GraphSplitter;
+use LaraMint\Analyzer\Graph\TabManifestEntry;
 
 class AnalysisResult
 {
@@ -301,3 +301,5 @@ class ProjectAnalyzer
         ($this->onProgress)($event, $data);
     }
 }
+
+

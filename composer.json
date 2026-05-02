@@ -17,18 +17,18 @@
     },
     "autoload": {
         "psr-4": {
-            "LaraMint\\LaravelBrain\\": "src/"
+            "LaraMint\\Analyzer\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaraMint\\LaravelBrain\\Tests\\": "tests/"
+            "LaraMint\\Analyzer\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "LaraMint\\LaravelBrain\\LaravelBrainServiceProvider"
+                "LaraMint\\Analyzer\\AnalyzerServiceProvider"
             ]
         }
     },
@@ -38,3 +38,4 @@
         }
     }
 }
+

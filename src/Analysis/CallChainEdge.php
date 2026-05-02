@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Analysis;
+namespace LaraMint\Analyzer\Analysis;
 
 /**
  * Represents a single directed hop discovered during deep tracing.
@@ -25,3 +25,5 @@ class CallChainEdge
         public string $visibility = 'public',
     ) {}
 }
+
+

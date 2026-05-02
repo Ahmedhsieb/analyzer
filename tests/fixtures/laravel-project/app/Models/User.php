@@ -13,3 +13,5 @@ class User extends Model
         return $this->hasMany(Order::class);
     }
 }
+
+

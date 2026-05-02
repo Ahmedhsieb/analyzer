@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Http\Controllers;
+namespace LaraMint\Analyzer\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use LaraMint\LaravelBrain\Analysis\ProjectAnalyzer;
+use LaraMint\Analyzer\Analysis\ProjectAnalyzer;
 
-class BrainController extends Controller
+class AnalyzerController extends Controller
 {
     public function source(Request $request): JsonResponse
     {
@@ -122,4 +122,6 @@ class BrainController extends Controller
         return '';
     }
 }
+
+
 

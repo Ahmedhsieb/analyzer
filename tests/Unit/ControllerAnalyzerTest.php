@@ -1,7 +1,7 @@
 <?php
 
-use LaraMint\LaravelBrain\Analysis\ControllerAnalyzer;
-use LaraMint\LaravelBrain\Analysis\RouteAnalyzer;
+use LaraMint\Analyzer\Analysis\ControllerAnalyzer;
+use LaraMint\Analyzer\Analysis\RouteAnalyzer;
 
 $fixtureProject = __DIR__.'/../fixtures/laravel-project';
 $monorepoFixture = __DIR__.'/../fixtures/monorepo';
@@ -61,3 +61,5 @@ it('resolves controllers from nested module composer roots', function () use ($m
         ->toHaveKey('sharedService');
     expect($controllers)->toHaveKey('Shared\\Controllers\\SharedRouteController');
 });
+
+

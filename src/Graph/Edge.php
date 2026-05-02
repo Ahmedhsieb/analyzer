@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Graph;
+namespace LaraMint\Analyzer\Graph;
 
 class Edge implements \JsonSerializable
 {
@@ -25,3 +25,5 @@ class Edge implements \JsonSerializable
         ];
     }
 }
+
+

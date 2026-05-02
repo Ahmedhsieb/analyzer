@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Parser;
+namespace LaraMint\Analyzer\Parser;
 
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
@@ -68,3 +68,5 @@ class PhpFileParser
         return $visitor->useMap;
     }
 }
+
+

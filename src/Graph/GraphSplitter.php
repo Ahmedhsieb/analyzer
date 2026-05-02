@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Graph;
+namespace LaraMint\Analyzer\Graph;
 
-use LaraMint\LaravelBrain\Analysis\ChannelDefinition;
-use LaraMint\LaravelBrain\Analysis\ConsoleCommandDefinition;
-use LaraMint\LaravelBrain\Analysis\RouteDefinition;
-use LaraMint\LaravelBrain\Analysis\ScheduleEntry;
+use LaraMint\Analyzer\Analysis\ChannelDefinition;
+use LaraMint\Analyzer\Analysis\ConsoleCommandDefinition;
+use LaraMint\Analyzer\Analysis\RouteDefinition;
+use LaraMint\Analyzer\Analysis\ScheduleEntry;
 
 class TabManifestEntry
 {
@@ -312,3 +312,5 @@ class GraphSplitter
         return $id;
     }
 }
+
+

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaraMint\LaravelBrain\Analysis;
+namespace LaraMint\Analyzer\Analysis;
 
 class MiddlewareRegistry
 {
@@ -22,3 +22,5 @@ class MiddlewareRegistry
         return $this->groups[$group] ?? [];
     }
 }
+
+
