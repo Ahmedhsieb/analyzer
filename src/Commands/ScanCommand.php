@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Ahmedhsieb\Analyzer\Commands;
 
-use Illuminate\Console\Command;
 use Ahmedhsieb\Analyzer\Analysis\ProjectAnalyzer;
 use Ahmedhsieb\Analyzer\Analysis\ProjectStructure;
+use Illuminate\Console\Command;
 
 class ScanCommand extends Command
 {
     protected $signature = 'analyzer:analyze
-        {--path= : Analyze a specific directory/file path inside the project}
+        {--path= : Filter results to a specific directory/file path (comma-separated)}
         {--route= : Filter by route URI or "METHOD /uri" (comma-separated)}
         {--group= : Filter by route group/prefix (comma-separated)}
         {--controller= : Filter by controller class/name (comma-separated)}
@@ -24,12 +24,10 @@ class ScanCommand extends Command
 
     private ProjectStructure $projectStructure;
 
-    private bool $unicodeOutput = true;
-
     /**
-     * @var array{route: string[], group: string[], controller: string[]}
+     * @var array{path: string[], route: string[], group: string[], controller: string[]}
      */
-    private array $filters = ['route' => [], 'group' => [], 'controller' => []];
+    private array $filters = ['path' => [], 'route' => [], 'group' => [], 'controller' => []];
 
     public function __construct()
     {
@@ -39,12 +37,11 @@ class ScanCommand extends Command
 
     public function handle(): int
     {
-        $projectRoot = $this->resolveProjectRoot((string) $this->option('path'));
-        if ($projectRoot === null) {
-            return self::FAILURE;
-        }
+        $projectRoot = (string) base_path();
+        $pathOption = trim((string) $this->option('path'));
 
         $this->filters = [
+            'path' => $this->buildPathFilters($projectRoot, $pathOption),
             'route' => $this->parseListOption((string) $this->option('route')),
             'group' => $this->parseListOption((string) $this->option('group')),
             'controller' => $this->parseListOption((string) $this->option('controller')),
@@ -54,7 +51,6 @@ class ScanCommand extends Command
 
         ini_set('memory_limit', '1024M');
         set_time_limit(0);
-        $this->configureOutputEncoding();
 
         $this->renderHeader($projectRoot);
 
@@ -67,8 +63,8 @@ class ScanCommand extends Command
 
     private function runWatchMode(string $projectRoot, int $interval): int
     {
-        $this->line('  <fg=gray>Watch mode: ON</>');
-        $this->line("  <fg=gray>Poll interval: {$interval}s</>");
+        $this->line('  <fg=gray>Watch mode:</> <fg=yellow>ON</>');
+        $this->line("  <fg=gray>Poll interval:</> <fg=yellow>{$interval}s</>");
         $this->newLine();
 
         $code = $this->runScan($projectRoot);
@@ -157,16 +153,16 @@ class ScanCommand extends Command
         $totalTime = number_format(microtime(true) - $startedAt, 2);
 
         $this->newLine();
-        $this->line('  <fg=gray>'.$this->hLine(41).'</>');
+        $this->line('  <fg=gray>'.$this->hLine(52).'</>');
         $this->line('  <options=bold>Summary</>');
         $this->newLine();
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=cyan>%s</>', 'Nodes', $result->fullGraph->nodeCount()));
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=cyan>%s</>', 'Edges', $result->fullGraph->edgeCount()));
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=cyan>%s</>', 'Routes', $result->totalRoutes));
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=cyan>%s</>', 'Commands', $result->totalCommands));
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=cyan>%s</>', 'Channels', $result->totalChannels));
-        $this->line(sprintf('    <fg=gray>%-14s</> <fg=yellow>%ss</>', 'Total time', $totalTime));
-        $this->line('  <fg=gray>'.$this->hLine(41).'</>');
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=cyan>%s</>', 'Nodes', $result->fullGraph->nodeCount()));
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=cyan>%s</>', 'Edges', $result->fullGraph->edgeCount()));
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=cyan>%s</>', 'Routes', $result->totalRoutes));
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=cyan>%s</>', 'Commands', $result->totalCommands));
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=cyan>%s</>', 'Channels', $result->totalChannels));
+        $this->line(sprintf('    <fg=gray>%-16s</> <fg=yellow>%ss</>', 'Total time', $totalTime));
+        $this->line('  <fg=gray>'.$this->hLine(52).'</>');
         $this->newLine();
 
         $appUrl = rtrim((string) config('app.url', 'http://localhost:8000'), '/');
@@ -178,14 +174,10 @@ class ScanCommand extends Command
     private function renderHeader(string $projectRoot): void
     {
         $this->line('');
-        $this->line('  <fg=magenta;options=bold>'.$this->frameLine('top').'</>');
-        $this->line(
-            '  <fg=magenta;options=bold>'.$this->frameLine('left').'</>'.
-            '  <fg=white;options=bold>Analyzer</>  <fg=gray>— architecture analysis</>      '.
-            '<fg=magenta;options=bold>'.$this->frameLine('right').'</>'
-        );
-        $this->line('  <fg=magenta;options=bold>'.$this->frameLine('bottom').'</>');
-        $this->line('  Path: <fg=gray>'.$projectRoot.'</>');
+        $this->line('  <fg=cyan>+----------------------------------------------------+</>');
+        $this->line('  <fg=cyan>|</> <options=bold>Analyzer</> <fg=gray>- architecture analysis</>                 <fg=cyan>|</>');
+        $this->line('  <fg=cyan>+----------------------------------------------------+</>');
+        $this->line('  Project: <fg=gray>'.$projectRoot.'</>');
 
         $this->renderFilterHint();
         $this->line('');
@@ -204,26 +196,26 @@ class ScanCommand extends Command
 
         $elapsed = isset($stepStartedAt[$step]) ? (microtime(true) - $stepStartedAt[$step]) : 0.0;
 
-        $left = sprintf('<fg=green>%s</> %s...', $this->checkMark(), $step);
+        $left = sprintf('<fg=green>[%s]</> %-16s', $this->checkMark(), $step.'...');
 
-        $details = null;
+        $details = '';
         if (is_int($count)) {
-            $details = '<fg=yellow>'.(string) $count;
+            $details = (string) $count;
             if ($unit !== '') {
                 $details .= ' '.$unit.($count === 1 ? '' : 's');
             }
-            $details .= '</>';
         }
+
         if ($extra !== '') {
-            $details = trim(($details ? $details.', ' : '').'<fg=gray>'.$extra.'</>');
+            $details = trim($details.' '.$extra);
         }
 
         $time = '<fg=gray>('.number_format($elapsed, 2).'s)</>';
 
-        if ($details !== null && $details !== '') {
-            $line = sprintf('  %-34s %s  %s', $left, $details, $time);
+        if ($details !== '') {
+            $line = sprintf('  %-32s <fg=yellow>%-24s</> %s', $left, $details, $time);
         } else {
-            $line = sprintf('  %-34s %s', $left, $time);
+            $line = sprintf('  %-32s %s', $left, $time);
         }
 
         $this->line($line);
@@ -267,74 +259,14 @@ class ScanCommand extends Command
         return $snapshot;
     }
 
-    private function configureOutputEncoding(): void
-    {
-        if (PHP_OS_FAMILY !== 'Windows') {
-            return;
-        }
-
-        if (function_exists('sapi_windows_cp_set')) {
-            @sapi_windows_cp_set(65001);
-        } else {
-            $this->unicodeOutput = false;
-        }
-    }
-
     private function checkMark(): string
     {
-        return $this->unicodeOutput ? '?' : '[OK]';
+        return 'OK';
     }
 
     private function hLine(int $length): string
     {
-        $char = $this->unicodeOutput ? '-' : '-';
-
-        return str_repeat($char, $length);
-    }
-
-    private function frameLine(string $part): string
-    {
-        if (! $this->unicodeOutput) {
-            return match ($part) {
-                'top', 'bottom' => '+-----------------------------------------+',
-                'left', 'right' => '|',
-                default => '|',
-            };
-        }
-
-        return match ($part) {
-            'top' => '+-----------------------------------------+',
-            'bottom' => '+-----------------------------------------+',
-            'left' => '¦',
-            'right' => '¦',
-            default => '¦',
-        };
-    }
-
-    private function resolveProjectRoot(string $pathOption): ?string
-    {
-        $base = (string) base_path();
-        if (trim($pathOption) === '') {
-            return $base;
-        }
-
-        $candidate = $pathOption;
-        if (! preg_match('/^[A-Za-z]:\\\\|^\\\\\\\\|^\//', $candidate)) {
-            $candidate = $base.DIRECTORY_SEPARATOR.$pathOption;
-        }
-
-        $real = realpath($candidate);
-        if ($real === false) {
-            $this->error('  Invalid --path. Target does not exist: '.$pathOption);
-
-            return null;
-        }
-
-        if (is_file($real)) {
-            return dirname($real);
-        }
-
-        return $real;
+        return str_repeat('-', $length);
     }
 
     /**
@@ -350,10 +282,55 @@ class ScanCommand extends Command
         return array_values(array_filter(array_map('trim', explode(',', $value)), static fn (string $item): bool => $item !== ''));
     }
 
+    /**
+     * @return string[]
+     */
+    private function buildPathFilters(string $projectRoot, string $pathOption): array
+    {
+        if ($pathOption === '') {
+            return [];
+        }
+
+        $items = $this->parseListOption($pathOption);
+        $base = str_replace('\\', '/', rtrim($projectRoot, '\\/'));
+        $filters = [];
+
+        foreach ($items as $item) {
+            $candidate = str_replace('\\', '/', trim($item));
+            if (! preg_match('/^[A-Za-z]:\/|^\/\//', $candidate)) {
+                $candidate = $base.'/'.ltrim($candidate, '/');
+            }
+
+            $real = realpath($candidate);
+            if ($real !== false) {
+                $candidate = str_replace('\\', '/', $real);
+            }
+
+            $candidate = strtolower(rtrim($candidate, '/'));
+            if ($candidate === '') {
+                continue;
+            }
+
+            $filters[] = $candidate;
+
+            if (str_starts_with($candidate, strtolower($base).'/')) {
+                $relative = ltrim(substr($candidate, strlen($base)), '/');
+                if ($relative !== '') {
+                    $filters[] = strtolower($relative);
+                }
+            }
+        }
+
+        return array_values(array_unique($filters));
+    }
+
     private function renderFilterHint(): void
     {
         $bits = [];
 
+        if ($this->filters['path'] !== []) {
+            $bits[] = 'path='.implode(',', $this->filters['path']);
+        }
         if ($this->filters['route'] !== []) {
             $bits[] = 'route='.implode(',', $this->filters['route']);
         }
@@ -369,7 +346,3 @@ class ScanCommand extends Command
         }
     }
 }
-
-
-
-

@@ -71,6 +71,7 @@ class ProjectAnalyzer
 
     /**
      * @param  array{
+     *   path?: string[],
      *   route?: string[],
      *   group?: string[],
      *   controller?: string[]
@@ -88,25 +89,25 @@ class ProjectAnalyzer
 
         $this->emit('project:start', ['name' => $projectName, 'message' => "Analyzing project: {$projectName}"]);
 
-        $this->emit('step:start', ['step' => 'routes', 'label' => 'Scanning routes', 'message' => '  â†’ Scanning routes...']);
+        $this->emit('step:start', ['step' => 'routes', 'label' => 'Scanning routes', 'message' => '  →’ Scanning routes...']);
         $routes = $this->routeAnalyzer->analyze($projectRoot);
         $routes = $this->applyRouteFilters($routes, $filters);
         $this->emit('step:done', ['step' => 'routes', 'count' => count($routes), 'unit' => 'route', 'message' => '    Found '.count($routes).' route(s)']);
 
-        $this->emit('step:start', ['step' => 'middleware', 'label' => 'Scanning middleware', 'message' => '  â†’ Scanning middleware...']);
+        $this->emit('step:start', ['step' => 'middleware', 'label' => 'Scanning middleware', 'message' => '  →’ Scanning middleware...']);
         $middlewareRegistry = $this->middlewareAnalyzer->analyze($projectRoot);
         $this->emit('step:done', ['step' => 'middleware', 'count' => null, 'unit' => null, 'message' => '    Done']);
 
-        $this->emit('step:start', ['step' => 'controllers', 'label' => 'Analyzing controllers', 'message' => '  â†’ Analyzing controllers...']);
+        $this->emit('step:start', ['step' => 'controllers', 'label' => 'Analyzing controllers', 'message' => '  →’ Analyzing controllers...']);
         $controllers = $this->controllerAnalyzer->analyze($projectRoot, $routes);
         $this->emit('step:done', ['step' => 'controllers', 'count' => count($controllers), 'unit' => 'controller', 'message' => '    Found '.count($controllers).' controller(s)']);
 
-        $this->emit('step:start', ['step' => 'lifecycle', 'label' => 'Tracing full lifecycle', 'message' => '  â†’ Tracing full lifecycle (deep)...']);
+        $this->emit('step:start', ['step' => 'lifecycle', 'label' => 'Tracing full lifecycle', 'message' => '  →’ Tracing full lifecycle (deep)...']);
         $psr4Map = $this->controllerAnalyzer->getPsr4Map();
         $callChain = $this->methodTracer->trace($controllers, $psr4Map, $projectRoot);
         $this->emit('step:done', ['step' => 'lifecycle', 'count' => count($callChain), 'unit' => 'call edge', 'message' => '    Discovered '.count($callChain).' call chain edge(s)']);
 
-        $this->emit('step:start', ['step' => 'models', 'label' => 'Analyzing models', 'message' => '  â†’ Analyzing models...']);
+        $this->emit('step:start', ['step' => 'models', 'label' => 'Analyzing models', 'message' => '  →’ Analyzing models...']);
         $modelFqcns = [];
         foreach ($callChain as $edge) {
             if ($edge->type === 'model') {
@@ -117,17 +118,17 @@ class ProjectAnalyzer
         $models = $this->modelAnalyzer->analyze($projectRoot, $modelFqcns);
         $this->emit('step:done', ['step' => 'models', 'count' => count($models), 'unit' => 'model', 'message' => '    Found '.count($models).' model(s)']);
 
-        $this->emit('step:start', ['step' => 'commands', 'label' => 'Scanning console commands', 'message' => '  â†’ Scanning console commands...']);
+        $this->emit('step:start', ['step' => 'commands', 'label' => 'Scanning console commands', 'message' => '  →’ Scanning console commands...']);
         $consoleResult = $this->consoleAnalyzer->analyze($projectRoot);
         $commands = $consoleResult['commands'];
         $schedules = $consoleResult['schedule'];
         $this->emit('step:done', ['step' => 'commands', 'count' => count($commands), 'unit' => 'command', 'extra' => count($schedules).' scheduled', 'message' => '    Found '.count($commands).' command(s), '.count($schedules).' schedule(s)']);
 
-        $this->emit('step:start', ['step' => 'channels', 'label' => 'Scanning broadcast channels', 'message' => '  â†’ Scanning broadcast channels...']);
+        $this->emit('step:start', ['step' => 'channels', 'label' => 'Scanning broadcast channels', 'message' => '  →’ Scanning broadcast channels...']);
         $channels = $this->channelAnalyzer->analyze($projectRoot);
         $this->emit('step:done', ['step' => 'channels', 'count' => count($channels), 'unit' => 'channel', 'message' => '    Found '.count($channels).' channel(s)']);
 
-        $this->emit('step:start', ['step' => 'cmd_chains', 'label' => 'Tracing command call chains', 'message' => '  â†’ Tracing command call chains...']);
+        $this->emit('step:start', ['step' => 'cmd_chains', 'label' => 'Tracing command call chains', 'message' => '  →’ Tracing command call chains...']);
         $commandEdges = [];
         foreach ($commands as $cmd) {
             if ($cmd->class) {
@@ -137,7 +138,7 @@ class ProjectAnalyzer
         }
         $this->emit('step:done', ['step' => 'cmd_chains', 'count' => count($commandEdges), 'unit' => 'call edge', 'message' => '    Discovered '.count($commandEdges).' command call chain edge(s)']);
 
-        $this->emit('step:start', ['step' => 'ch_chains', 'label' => 'Tracing channel call chains', 'message' => '  â†’ Tracing channel call chains...']);
+        $this->emit('step:start', ['step' => 'ch_chains', 'label' => 'Tracing channel call chains', 'message' => '  →’ Tracing channel call chains...']);
         $channelEdges = [];
         foreach ($channels as $ch) {
             if ($ch->class) {
@@ -150,11 +151,11 @@ class ProjectAnalyzer
         }
         $this->emit('step:done', ['step' => 'ch_chains', 'count' => count($channelEdges), 'unit' => 'call edge', 'message' => '    Discovered '.count($channelEdges).' channel call chain edge(s)']);
 
-        $this->emit('step:start', ['step' => 'queries', 'label' => 'Tracing DB queries', 'message' => '  â†’ Tracing DB queries...']);
+        $this->emit('step:start', ['step' => 'queries', 'label' => 'Tracing DB queries', 'message' => '  →’ Tracing DB queries...']);
         $dbQueryMap = $this->queryTracer->buildQueryMap($callChain, $controllers, $psr4Map, $projectRoot);
         $this->emit('step:done', ['step' => 'queries', 'count' => count($dbQueryMap), 'unit' => 'action', 'message' => '    Found DB query info for '.count($dbQueryMap).' action(s)']);
 
-        $this->emit('step:start', ['step' => 'graph', 'label' => 'Building graph', 'message' => '  â†’ Building graph...']);
+        $this->emit('step:start', ['step' => 'graph', 'label' => 'Building graph', 'message' => '  →’ Building graph...']);
         $fullGraph = $this->graphBuilder->build(
             $projectName, $routes, $middlewareRegistry, $controllers, $callChain, $models, $projectRoot, $dbQueryMap,
         );
@@ -162,7 +163,7 @@ class ProjectAnalyzer
         $this->graphBuilder->addChannels($channels, $channelEdges);
         $this->emit('step:done', ['step' => 'graph', 'count' => $fullGraph->nodeCount(), 'unit' => 'node', 'extra' => $fullGraph->edgeCount().' edges', 'message' => "    {$fullGraph->nodeCount()} nodes, {$fullGraph->edgeCount()} edges"]);
 
-        $this->emit('step:start', ['step' => 'split', 'label' => 'Splitting into tab subgraphs', 'message' => '  â†’ Splitting into tab subgraphs...']);
+        $this->emit('step:start', ['step' => 'split', 'label' => 'Splitting into tab subgraphs', 'message' => '  →’ Splitting into tab subgraphs...']);
         $split = $this->graphSplitter->split($fullGraph, $routes, $commands, $channels, $schedules, $projectName, $analyzedAt);
         $this->emit('step:done', ['step' => 'split', 'count' => count($split['subgraphs']), 'unit' => 'tab', 'message' => '    '.count($split['subgraphs']).' tab(s) generated']);
 
@@ -199,6 +200,7 @@ class ProjectAnalyzer
     /**
      * @param  RouteDefinition[]  $routes
      * @param  array{
+     *   path?: string[],
      *   route?: string[],
      *   group?: string[],
      *   controller?: string[]
@@ -207,15 +209,20 @@ class ProjectAnalyzer
      */
     private function applyRouteFilters(array $routes, array $filters): array
     {
+        $pathFilters = array_values(array_filter($filters['path'] ?? [], fn ($v) => $v !== ''));
         $routeFilters = array_values(array_filter($filters['route'] ?? [], fn ($v) => $v !== ''));
         $groupFilters = array_values(array_filter($filters['group'] ?? [], fn ($v) => $v !== ''));
         $controllerFilters = array_values(array_filter($filters['controller'] ?? [], fn ($v) => $v !== ''));
 
-        if ($routeFilters === [] && $groupFilters === [] && $controllerFilters === []) {
+        if ($pathFilters === [] && $routeFilters === [] && $groupFilters === [] && $controllerFilters === []) {
             return $routes;
         }
 
-        return array_values(array_filter($routes, function (RouteDefinition $route) use ($routeFilters, $groupFilters, $controllerFilters): bool {
+        return array_values(array_filter($routes, function (RouteDefinition $route) use ($pathFilters, $routeFilters, $groupFilters, $controllerFilters): bool {
+            if ($pathFilters !== [] && ! $this->matchesPathFilter($route, $pathFilters)) {
+                return false;
+            }
+
             if ($routeFilters !== [] && ! $this->matchesRouteFilter($route, $routeFilters)) {
                 return false;
             }
@@ -230,6 +237,28 @@ class ProjectAnalyzer
 
             return true;
         }));
+    }
+
+    /**
+     * @param string[] $filters
+     */
+    private function matchesPathFilter(RouteDefinition $route, array $filters): bool
+    {
+        $routeFile = strtolower(str_replace('\\', '/', $route->file));
+        $controller = strtolower(str_replace('\\', '/', ltrim($route->controller, '\\')));
+
+        foreach ($filters as $filter) {
+            $needle = strtolower(trim(str_replace('\\', '/', $filter), " \t\n\r\0\x0B/"));
+            if ($needle === '') {
+                continue;
+            }
+
+            if (str_contains($routeFile, $needle) || str_contains($controller, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -301,7 +330,6 @@ class ProjectAnalyzer
         ($this->onProgress)($event, $data);
     }
 }
-
 
 
 

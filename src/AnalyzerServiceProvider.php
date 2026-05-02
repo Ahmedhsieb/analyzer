@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Ahmedhsieb\Analyzer;
 
-use Illuminate\Support\ServiceProvider;
+use Ahmedhsieb\Analyzer\Commands\ChangeAuthCommand;
 use Ahmedhsieb\Analyzer\Commands\ScanCommand;
+use Ahmedhsieb\Analyzer\Commands\SetupAuthCommand;
+use Illuminate\Support\ServiceProvider;
 
 class AnalyzerServiceProvider extends ServiceProvider
 {
@@ -17,7 +19,7 @@ class AnalyzerServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'analyzer');
-        $this->commands([ScanCommand::class]);
+        $this->commands([ScanCommand::class, SetupAuthCommand::class, ChangeAuthCommand::class]);
         $this->loadRoutesFrom(__DIR__.'/../routes/analyzer.php');
     }
 }

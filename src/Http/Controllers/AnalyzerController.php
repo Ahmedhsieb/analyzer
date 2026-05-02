@@ -4,14 +4,69 @@ declare(strict_types=1);
 
 namespace Ahmedhsieb\Analyzer\Http\Controllers;
 
+use Ahmedhsieb\Analyzer\Analysis\ProjectAnalyzer;
+use Ahmedhsieb\Analyzer\Security\AnalyzerAuthManager;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Ahmedhsieb\Analyzer\Analysis\ProjectAnalyzer;
 
 class AnalyzerController extends Controller
 {
+    public function favicon(): Response
+    {
+        $filePath = $this->packageAssetPath('favicon.svg');
+        if ($filePath && file_exists($filePath) && is_file($filePath)) {
+            return $this->serveFile($filePath);
+        }
+
+        return response('', 404);
+    }
+
+    public function loginPage(Request $request): Response|RedirectResponse
+    {
+        if ($request->session()->get('analyzer_authenticated') === true) {
+            return redirect('/_analyzer');
+        }
+
+        $manager = new AnalyzerAuthManager;
+
+        return response()->view('analyzer::login', [
+            'configured' => $manager->isConfigured(),
+            'username' => $manager->username(),
+        ]);
+    }
+
+    public function login(Request $request): RedirectResponse
+    {
+        $manager = new AnalyzerAuthManager;
+        if (! $manager->isConfigured()) {
+            return redirect('/_analyzer/login')->with('error', 'Analyzer auth is not configured. Run: php artisan analyzer:setup-auth');
+        }
+
+        $username = trim((string) $request->input('username', ''));
+        $password = (string) $request->input('password', '');
+
+        if (! $manager->verify($username, $password)) {
+            return redirect('/_analyzer/login')->with('error', 'Invalid username or password.');
+        }
+
+        $request->session()->regenerate();
+        $request->session()->put('analyzer_authenticated', true);
+
+        return redirect('/_analyzer');
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        $request->session()->forget('analyzer_authenticated');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/_analyzer/login');
+    }
+
     public function source(Request $request): JsonResponse
     {
         $filePath = $request->query('path', '');

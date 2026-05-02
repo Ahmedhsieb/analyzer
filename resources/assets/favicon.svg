@@ -1,0 +1,24 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="10" y1="10" x2="118" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111D36"/>
+      <stop offset="1" stop-color="#0A1227"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="38" y1="64" x2="90" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2ED3D5"/>
+      <stop offset="1" stop-color="#23A8E7"/>
+    </linearGradient>
+    <filter id="glow" x="26" y="44" width="76" height="40" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="10" y="10" width="108" height="108" rx="24" fill="url(#bg)"/>
+  <rect x="10.5" y="10.5" width="107" height="107" rx="23.5" stroke="#2A3E66"/>
+
+  <path d="M36 64H52L58.5 46L67 78L74 60H92" stroke="url(#pulse)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+</svg>

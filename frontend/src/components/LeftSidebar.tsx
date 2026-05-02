@@ -49,14 +49,14 @@ function RouteItem({ tab, isActive, isLoading, onSelect }: {
       className={`left-nav-item ${isActive ? 'left-nav-item--active' : ''}`}
       type="button"
       onClick={() => onSelect(tab)}
-      title={`${tab.nodeCount} nodes · ${tab.edgeCount} edges`}
+      title={`${tab.nodeCount} nodes - ${tab.edgeCount} edges`}
     >
       {method
         ? <span className="left-nav-method" style={{ color }}>{method}</span>
-        : <span className="left-nav-method" style={{ color }}>›</span>
+        : <span className="left-nav-method" style={{ color }}>{'>'}</span>
       }
       <span className="left-nav-uri">{uri}</span>
-      {isLoading && <span className="left-nav-badge">…</span>}
+      {isLoading && <span className="left-nav-badge">...</span>}
     </button>
   )
 }
@@ -65,36 +65,18 @@ export function LeftSidebar({
   fileGroups, activeId, loadingId, onSelect,
   visibleTypes, counts, onToggle, onShowAll, onHideAll,
 }: Props) {
+  const [sidebarWidth, setSidebarWidth] = useState(290)
   const [topHeight, setTopHeight] = useState(320)
   const [search, setSearch] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
   const dragStartY = useRef(0)
   const dragStartHeight = useRef(0)
+  const dragStartX = useRef(0)
+  const dragStartWidth = useRef(0)
 
-  // Track expanded state (collapsed by default)
+  // Collapsed by default; expand only by click or when active tab must be visible.
   const [expandedFiles, setExpandedFiles] = useState<Set<string>>(new Set())
   const [expandedPrefixes, setExpandedPrefixes] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    if (fileGroups.length === 0) return
-
-    setExpandedFiles((prev) => {
-      const next = new Set(prev)
-      for (const fg of fileGroups) next.add(fg.fileName)
-      return next
-    })
-
-    setExpandedPrefixes((prev) => {
-      const next = new Set(prev)
-      for (const fg of fileGroups) {
-        for (const pg of fg.prefixGroups) {
-          if (pg.prefix === '_flat') continue
-          next.add(`${fg.fileName}::${pg.prefix}`)
-        }
-      }
-      return next
-    })
-  }, [fileGroups])
 
   useEffect(() => {
     if (!activeId) return
@@ -190,9 +172,34 @@ export function LeftSidebar({
     window.addEventListener('mouseup', onMouseUp)
   }, [topHeight])
 
+  const onWidthMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    dragStartX.current = e.clientX
+    dragStartWidth.current = sidebarWidth
+
+    const onMouseMove = (event: MouseEvent) => {
+      const delta = event.clientX - dragStartX.current
+      const next = Math.max(240, Math.min(760, dragStartWidth.current + delta))
+      setSidebarWidth(next)
+    }
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+    }
+
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', onMouseUp)
+  }, [sidebarWidth])
+
   const filteredFileGroups = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return fileGroups
+
     return fileGroups
       .map((fg) => ({
         ...fg,
@@ -204,13 +211,13 @@ export function LeftSidebar({
   }, [fileGroups, search])
 
   return (
-    <div className="left-sidebar" ref={containerRef}>
+    <div className="left-sidebar" ref={containerRef} style={{ width: sidebarWidth }}>
       <div className="left-sidebar-top" style={{ height: topHeight }}>
         <div className="left-nav-search">
           <input
             className="left-nav-search-input"
             type="text"
-            placeholder="Search routes…"
+            placeholder="Search routes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -220,7 +227,7 @@ export function LeftSidebar({
               type="button"
               onClick={() => setSearch('')}
             >
-              ×
+              x
             </button>
           )}
         </div>
@@ -238,7 +245,7 @@ export function LeftSidebar({
                   onClick={() => onFileHeaderClick(fg, fileOpen)}
                   title={fg.fileName}
                 >
-                  <span className="left-nav-file-chevron">{fileOpen ? '▾' : '▸'}</span>
+                  <span className="left-nav-file-chevron">{fileOpen ? 'v' : '>'}</span>
                   <span className="left-nav-file-icon">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -272,7 +279,7 @@ export function LeftSidebar({
                         type="button"
                         onClick={() => togglePrefix(prefixKey)}
                       >
-                        <span className="left-nav-prefix-chevron">{prefixOpen ? '▾' : '▸'}</span>
+                        <span className="left-nav-prefix-chevron">{prefixOpen ? 'v' : '>'}</span>
                         <span className="left-nav-prefix-icon">
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
@@ -311,6 +318,7 @@ export function LeftSidebar({
           onHideAll={onHideAll}
         />
       </div>
+      <div className="left-sidebar-resize-handle" onMouseDown={onWidthMouseDown} />
     </div>
   )
 }

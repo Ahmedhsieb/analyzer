@@ -38,6 +38,36 @@ composer require --dev ahmedhsieb/analyzer
 php artisan analyzer:analyze
 ```
 
+### Setup login (secure viewer)
+
+```bash
+php artisan analyzer:setup-auth
+```
+
+Or non-interactive:
+
+```bash
+php artisan analyzer:setup-auth --username=admin --password=secret
+```
+
+Then open:
+
+```text
+/_analyzer/login
+```
+
+### Change login credentials
+
+```bash
+php artisan analyzer:change-auth
+```
+
+Or non-interactive:
+
+```bash
+php artisan analyzer:change-auth --current-username=admin --current-password=oldpass --username=newadmin --password=newpass
+```
+
 ### Watch mode
 
 ```bash
@@ -45,7 +75,7 @@ php artisan analyzer:analyze --watch
 php artisan analyzer:analyze --watch --interval=5
 ```
 
-### Analyze specific path
+### Filter by path
 
 ```bash
 php artisan analyzer:analyze --path=modules/Billing

@@ -17,6 +17,10 @@ const ALL_TYPES: GraphNode['type'][] = [
   'command', 'channel', 'schedule',
 ]
 
+function getCsrfToken(): string {
+  return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
+}
+
 export default function App() {
   const { theme, toggle: toggleTheme } = useTheme()
   const { manifest, loading: manifestLoading, error: manifestError } = useManifest()
@@ -185,7 +189,12 @@ export default function App() {
     if (!window.confirm('This will analyze the full project. Continue?')) return
     setScanning(true)
     try {
-      const res = await fetch(import.meta.env.BASE_URL + 'api/scan', { method: 'POST' })
+      const res = await fetch(import.meta.env.BASE_URL + 'api/scan', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': getCsrfToken(),
+        },
+      })
       if (res.ok) {
         window.location.reload()
       } else {

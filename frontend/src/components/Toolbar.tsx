@@ -34,14 +34,18 @@ function formatAge(ms: number): string {
 }
 
 const LAYOUTS = [
-  { value: 'dagre', label: 'Hierarchical (dagre)' },
+  { value: 'dagre', label: 'Hierarchical' },
   { value: 'breadthfirst', label: 'Breadth-first' },
-  { value: 'cose-bilkent', label: 'Force (cose-bilkent)' },
+  { value: 'cose-bilkent', label: 'Force' },
   { value: 'circle', label: 'Circle' },
   { value: 'grid', label: 'Grid' },
 ]
 
-function ActionDropdown({ label, icon, children }: { label: string, icon: React.ReactNode, children: React.ReactNode }) {
+function getCsrfToken(): string {
+  return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? ''
+}
+
+function ActionDropdown({ label, children }: { label: string, children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -56,7 +60,7 @@ function ActionDropdown({ label, icon, children }: { label: string, icon: React.
   return (
     <div className="action-dropdown" ref={ref}>
       <button className={`toolbar-btn ${isOpen ? 'toolbar-btn--active' : ''}`} type="button" onClick={() => setIsOpen(!isOpen)}>
-        {icon} <span>{label}</span> <span className="dropdown-chevron">?</span>
+        <span>{label}</span> <span className="dropdown-chevron">v</span>
       </button>
       {isOpen && <div className="action-dropdown-menu">{children}</div>}
     </div>
@@ -67,6 +71,7 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
   const [searchValue, setSearchValue] = useState('')
   const [showMermaid, setShowMermaid] = useState(false)
   const [scanning, setScanning] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
   const timeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -92,10 +97,15 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
   }
 
   const handleScan = async () => {
-    if (!window.confirm('This will re-analyze the full ERP project. Continue?')) return
+    if (!window.confirm('This will re-analyze the full project. Continue?')) return
     setScanning(true)
     try {
-      const res = await fetch(import.meta.env.BASE_URL + 'api/scan', { method: 'POST' })
+      const res = await fetch(import.meta.env.BASE_URL + 'api/scan', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': getCsrfToken(),
+        },
+      })
       if (res.ok) {
         window.location.reload()
       } else {
@@ -105,6 +115,22 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
       alert('Analysis failed.')
     } finally {
       setScanning(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await fetch(import.meta.env.BASE_URL + 'logout', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': getCsrfToken(),
+        },
+      })
+      window.location.href = import.meta.env.BASE_URL + 'login'
+    } catch {
+      alert('Logout failed.')
+      setLoggingOut(false)
     }
   }
 
@@ -121,7 +147,7 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
     return {
       ageMs,
       isStale: ageMs > 24 * 3600 * 1000,
-      label: `Analyzed ${formatAge(ageMs)} ago`
+      label: `Analyzed ${formatAge(ageMs)} ago`,
     }
   }, [analyzedAt, now])
 
@@ -131,30 +157,26 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
     <>
       <div className="toolbar">
         <div className="toolbar-brand">
-          <div className="erp-brand-mark">EB</div>
+          <div className="erp-brand-mark">AN</div>
           <div className="erp-brand-text">
             <strong>Analyzer</strong>
-            <span>Architecture Control Center</span>
+            <span>Architecture Map</span>
           </div>
         </div>
 
         <div className="toolbar-stats">
           <span className="stat-chip">{visibleCount}/{nodeCount} nodes</span>
           <span className="stat-chip">{edgeCount} edges</span>
-          {isLarge && (
-            <span className="stat-chip stat-chip--warn" title="Large graph: dagre auto-switches to breadthfirst">
-              high volume graph
-            </span>
-          )}
+          {isLarge && <span className="stat-chip stat-chip--warn">large graph</span>}
           {ageData && (
             ageData.isStale ? (
               <button
                 className="stat-chip stat-chip--stale"
                 type="button"
                 onClick={handleScan}
-                title={`Graph is older than 24h (last analyzed ${analyzedAt ? new Date(analyzedAt).toLocaleString() : ''}). Click to re-analyze.`}
+                title={`Last analyzed: ${analyzedAt ? new Date(analyzedAt).toLocaleString() : ''}`}
               >
-                {ageData.label} | Re-analyze
+                {ageData.label} | re-analyze
               </button>
             ) : (
               <span
@@ -169,7 +191,7 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
 
         <div className="toolbar-controls">
           <div className="toolbar-group">
-            <ActionDropdown label="View" icon={<span>VX</span>}>
+            <ActionDropdown label="View">
               <div className="dropdown-item">
                 <label>Layout</label>
                 <select
@@ -191,14 +213,14 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
                     type="button"
                     onClick={() => onRankDirChange(rankDir === 'LR' ? 'TB' : 'LR')}
                   >
-                    {rankDir === 'LR' ? 'Horizontal (LR)' : 'Vertical (TB)'}
+                    {rankDir === 'LR' ? 'Horizontal' : 'Vertical'}
                   </button>
                 </div>
               )}
 
               <div className="dropdown-item">
                 <button type="button" onClick={handleFit} className="toolbar-btn w-full">
-                  <span>FT</span> <span>Fit to Screen</span>
+                  Fit to screen
                 </button>
               </div>
             </ActionDropdown>
@@ -217,10 +239,10 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
           </div>
 
           <div className="toolbar-group">
-            <ActionDropdown label="Export" icon={<span>EX</span>}>
+            <ActionDropdown label="Export">
               <div className="dropdown-item">
                 <button type="button" onClick={handleExportPng} className="toolbar-btn w-full">
-                  <span>PNG</span> <span>Download PNG</span>
+                  Download PNG
                 </button>
               </div>
               <div className="dropdown-item">
@@ -230,7 +252,7 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
                   className="toolbar-btn w-full"
                   disabled={!graphData}
                 >
-                  <span>MR</span> <span>Copy Mermaid</span>
+                  Copy Mermaid
                 </button>
               </div>
             </ActionDropdown>
@@ -250,10 +272,7 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
                   <span>Analyzing...</span>
                 </>
               ) : (
-                <>
-                  <span>RUN</span>
-                  <span>Re-analyze</span>
-                </>
+                <span>Re-analyze</span>
               )}
             </button>
 
@@ -265,6 +284,16 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
             >
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className={`toolbar-btn toolbar-btn--logout ${loggingOut ? 'toolbar-btn--loading' : ''}`}
+              title="Logout"
+              disabled={loggingOut}
+            >
+              {loggingOut ? <span>Signing out...</span> : <span>Logout</span>}
+            </button>
           </div>
         </div>
       </div>
@@ -273,11 +302,10 @@ export function Toolbar({ layout, rankDir, onRankDirChange, nodeCount, edgeCount
         <ExportModal
           mermaidCode={graphToMermaid(graphData, activeTabLabel)}
           filename={`${activeTabLabel.replace(/[^a-z0-9]/gi, '_')}_graph.mmd`}
-          title={`${activeTabLabel} - ERP Lifecycle Graph`}
+          title={`${activeTabLabel} - Architecture Graph`}
           onClose={() => setShowMermaid(false)}
         />
       )}
     </>
   )
 }
-
