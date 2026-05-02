@@ -1,0 +1,116 @@
+# Analyzer
+
+Analyzer is a Laravel developer tool that scans your architecture and visualizes route-to-code flow as an interactive graph.
+
+It is designed for monorepos and modular codebases where routes may live in `packages`, `modules`, `extensions`, microservices, or any custom folder naming convention.
+
+## Highlights
+
+- Full request lifecycle tracing: route -> controller -> service -> repository -> model -> events/jobs
+- Monorepo-aware route discovery across nested Laravel roots
+- Interactive viewer under `/_analyzer`
+- Command and schedule discovery
+- Broadcast channel discovery
+- Query tracing (Eloquent + raw)
+- Per-route tabs, source view, flow view, export (PNG/Mermaid)
+- Watch mode
+- Scoped analysis filters by path, route, group, and controller
+
+## Installation
+
+```bash
+composer require --dev laramint/analyzer
+```
+
+## Commands
+
+### Analyze full project
+
+```bash
+php artisan analyzer:analyze
+```
+
+### Watch mode
+
+```bash
+php artisan analyzer:analyze --watch
+php artisan analyzer:analyze --watch --interval=5
+```
+
+### Analyze specific path
+
+```bash
+php artisan analyzer:analyze --path=modules/Billing
+php artisan analyzer:analyze --path=packages/Shared/src/Routes/web.php
+```
+
+### Analyze specific route(s)
+
+```bash
+php artisan analyzer:analyze --route=/api/orders
+php artisan analyzer:analyze --route="GET /api/orders,POST /api/orders"
+```
+
+### Analyze specific group/prefix
+
+```bash
+php artisan analyzer:analyze --group=api
+php artisan analyzer:analyze --group="admin,v1"
+```
+
+### Analyze specific controller
+
+```bash
+php artisan analyzer:analyze --controller=OrderController
+php artisan analyzer:analyze --controller="Modules\\Billing\\Http\\Controllers\\InvoiceController"
+```
+
+Notes:
+- Alias: `analyzer:scan`
+- Filters can be combined.
+
+## Viewer URL
+
+Open:
+
+```text
+/_analyzer
+```
+
+## Registered routes
+
+```text
+GET  /_analyzer/api/source
+POST /_analyzer/api/scan
+GET  /_analyzer/{any?}
+```
+
+## Output files
+
+Analysis output is written to:
+
+```text
+storage/app/analyzer/
+```
+
+Files:
+
+```text
+.graph-manifest.json
+.graph-all.json
+.graph-{tab-id}.json
+```
+
+## Security
+
+The package routes/commands are loaded only in local environment by default.
+
+## Development
+
+```bash
+composer install
+cd frontend && npm install && npm run build
+```
+
+
+
